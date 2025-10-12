@@ -57,6 +57,3 @@
 Net   "clk"  Loc = "IO_SB_A8" | SCHMITT_TRIGGER=true;
 Net   "rst"  Loc = "IO_SB_B7"; # BUT
 Net   "led"  Loc = "IO_SB_B6"; # LED
-
-Net   "dbg_tx"  Loc = "IO_SA_B6"; # RX of RP2040
-Net   "dbg_rx"  Loc = "IO_SA_A6"; # RX of RP2040
