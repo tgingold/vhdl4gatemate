@@ -2,6 +2,8 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
+use work.cc_components.all;
+
 entity vga is
   port (
     clk_i : in std_logic;
@@ -16,30 +18,6 @@ entity vga is
 end entity;
 
 architecture rtl of vga is
-  component CC_PLL is
-    generic (
-      REF_CLK         : string;  -- reference input in MHz
-      OUT_CLK         : string;  -- pll output frequency in MHz
-      PERF_MD         : string;  -- LOWPOWER, ECONOMY, SPEED
-      LOW_JITTER      : integer; -- 0: disable, 1: enable low jitter mode
-      CI_FILTER_CONST : integer; -- optional CI filter constant
-      CP_FILTER_CONST : integer  -- optional CP filter constant
-      );
-    port (
-      CLK_REF             : in  std_logic;
-      USR_CLK_REF         : in  std_logic;
-      CLK_FEEDBACK        : in  std_logic;
-      USR_LOCKED_STDY_RST : in  std_logic;
-      USR_PLL_LOCKED_STDY : out std_logic;
-      USR_PLL_LOCKED      : out std_logic;
-      CLK0                : out std_logic;
-      CLK90               : out std_logic;
-      CLK180              : out std_logic;
-      CLK270              : out std_logic;
-      CLK_REF_OUT         : out std_logic
-      );
-  end component;
-
   --  VGA 640x480 72Hz 31.5MHz
   --  H: Sync + Back-Porch + Frame + Front-Porch
   --      40  +  128       + 640   + 24            = 832
