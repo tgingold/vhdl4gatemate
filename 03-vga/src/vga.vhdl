@@ -38,8 +38,9 @@ architecture rtl of vga is
   signal clk_video    : std_logic;
   signal pll_locked : std_logic;
 
-  signal vcount, hcount : unsigned(9 downto 0);
+  signal vcount, hcount, xpos, ypos : unsigned(9 downto 0);
   signal hpre, hvideo, vpre, vvideo : std_logic;
+  signal xdir, ydir : std_logic;
 begin
   inst_pll : CC_PLL
     generic map (
@@ -76,6 +77,10 @@ begin
         vvideo <= '0';
         vga_hsync_o <= '0';
         vga_vsync_o <= '0';
+        xpos <= to_unsigned(hframe / 2 + 4, xpos'length);
+        ypos <= to_unsigned(vframe / 2, ypos'length);
+        xdir <= '1';
+        ydir <= '1';
       else
         hcount <= hcount + 1;
 
@@ -118,14 +123,47 @@ begin
           end if;
         end if;
 
-        if hvideo = '1' and vvideo = '1' then
-          vga_red_o <= (others => hcount(6));
-          vga_green_o <= (others => hcount(7));
-          vga_blue_o <= (others => hcount(8));
+        if hvideo = '1' and vvideo = '1'
+          and hcount = xpos and vcount = ypos
+        then
+          vga_red_o <= (others => '1');
+          vga_green_o <= (others => '1');
+          vga_blue_o <= (others => '1');
         else
           vga_red_o <= (others => '0');
           vga_green_o <= (others => '0');
           vga_blue_o <= (others => '0');
+        end if;
+
+        if vpre = '1' and vcount = 0 and hpre = '1' and hcount < 2 then
+          if xdir = '1' then
+            if xpos = hframe - 1 then
+              xdir <= '0';
+            else
+              xpos <= xpos + 1;
+            end if;
+          else
+            if xpos = 0 then
+              xdir <= '1';
+            else
+              xpos <= xpos - 1;
+            end if;
+          end if;
+
+          if ydir = '1' then
+            if ypos = vframe - 1 then
+              ydir <= '0';
+            else
+              ypos <= ypos + 1;
+            end if;
+          else
+            if ypos = 0 then
+              ydir <= '1';
+            else
+              ypos <= ypos - 1;
+            end if;
+          end if;
+
         end if;
       end if;
     end if;
