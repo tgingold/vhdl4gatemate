@@ -25,15 +25,15 @@ architecture rtl of vga is
   --     3   +  28         + 480   + 9             = 520
   --
 
-  constant hsync : natural := 40;
-  constant hbporch : natural := 128;
-  constant hframe : natural := 640;
-  constant hfporch : natural := 24;
+  constant hsync : natural := 128;
+  constant hbporch : natural := 88;
+  constant hframe : natural := 800;
+  constant hfporch : natural := 40;
 
-  constant vsync : natural := 3;
-  constant vbporch : natural := 28;
-  constant vframe : natural := 480;
-  constant vfporch : natural := 9;
+  constant vsync : natural := 4;
+  constant vbporch : natural := 23;
+  constant vframe : natural := 600;
+  constant vfporch : natural := 1;
 
   signal clk_video    : std_logic;
   signal pll_locked : std_logic;
@@ -44,7 +44,7 @@ begin
   inst_pll : CC_PLL
     generic map (
       REF_CLK         => "10.0",
-      OUT_CLK         => "31.5",
+      OUT_CLK         => "40.0",
       PERF_MD         => "ECONOMY",
       LOW_JITTER      => 1,
       CI_FILTER_CONST => 2,
@@ -74,15 +74,13 @@ begin
         hpre <= '1';
         hvideo <= '0';
         vvideo <= '0';
-        vga_hsync_o <= '1';
-        vga_vsync_o <= '1';
+        vga_hsync_o <= '0';
+        vga_vsync_o <= '0';
       else
         hcount <= hcount + 1;
 
         if hpre = '1' then
-          if hcount = 0 then
-            vga_hsync_o <= '0';
-          elsif hcount = hsync - 1 then
+          if hcount = hsync - 1 then
             vga_hsync_o <= '1';
           elsif hcount = hsync + hbporch - 1 then
             hpre <= '0';
@@ -97,13 +95,11 @@ begin
         elsif hcount = hfporch - 1 then
           hpre <= '1';
           hcount <= (others => '0');
-
+          vga_hsync_o <= '0';
           vcount <= vcount + 1;
 
           if vpre = '1' then
-            if vcount = 0 then
-              vga_vsync_o <= '0';
-            elsif vcount = vsync - 1 then
+            if vcount = vsync - 1 then
               vga_vsync_o <= '1';
             elsif vcount = vsync + vbporch - 1 then
               vpre <= '0';
@@ -118,13 +114,14 @@ begin
           elsif vcount = vfporch - 1 then
             vpre <= '1';
             vcount <= (others => '0');
+            vga_vsync_o <= '0';
           end if;
         end if;
 
         if hvideo = '1' and vvideo = '1' then
-          vga_red_o <= std_logic_vector(hcount(2 downto 0) & '0');
-          vga_green_o <= std_logic_vector(hcount(5 downto 3) & '0');
-          vga_blue_o <= std_logic_vector(hcount(8 downto 6) & '0');
+          vga_red_o <= (others => hcount(6));
+          vga_green_o <= (others => hcount(7));
+          vga_blue_o <= (others => hcount(8));
         else
           vga_red_o <= (others => '0');
           vga_green_o <= (others => '0');
