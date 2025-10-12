@@ -14,6 +14,6 @@ $(TOP).bit: $(TOP).impl
 	gmpack $< $@
 
 load: $(TOP).bit
-	@echo "you might need sudo..."
+	@echo "you might need to do: sudo $$(which openFPGALoader) ..."
 	openFPGALoader -b dirtyJtag $(TOP).bit
 
