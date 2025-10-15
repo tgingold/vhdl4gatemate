@@ -7,7 +7,7 @@ use work.cc_components.all;
 entity vga is
   port (
     clk_i : in std_logic;
-    rst : in std_logic;
+    but_i : in std_logic;
     vga_red_o : out std_logic_vector(3 downto 0);
     vga_green_o : out std_logic_vector(3 downto 0);
     vga_blue_o : out std_logic_vector(3 downto 0);
@@ -37,6 +37,7 @@ architecture rtl of vga is
 
   signal clk_video    : std_logic;
   signal pll_locked : std_logic;
+  signal rst_n : std_logic;
 
   signal vcount, hcount, xpos, ypos : unsigned(9 downto 0);
   signal hpre, hvideo, vpre, vvideo : std_logic;
@@ -65,10 +66,19 @@ begin
       CLK_REF_OUT         => open
       );
 
+  process(clk_video, pll_locked)
+  begin
+    if pll_locked = '0' then
+      rst_n <= '0';
+    elsif rising_edge(clk_video) then
+      rst_n <= '1';
+    end if;
+  end process;
+
   process(clk_video)
   begin
     if rising_edge(clk_video) then
-      if rst = '0' or pll_locked = '0' then
+      if rst_n = '0' or but_i = '0' then
         vcount <= (others => '0');
         hcount <= (others => '0');
         vpre <= '1';
@@ -124,7 +134,8 @@ begin
         end if;
 
         if hvideo = '1' and vvideo = '1'
-          and hcount = xpos and vcount = ypos
+          and hcount(hcount'left downto 2) = xpos(xpos'left downto 2)
+          and vcount(vcount'left downto 2) = ypos(ypos'left downto 2)
         then
           vga_red_o <= (others => '1');
           vga_green_o <= (others => '1');
