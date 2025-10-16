@@ -35,12 +35,11 @@ architecture rtl of blink is
       );
   end component;
 
-  signal clk_100    : std_logic;
+  signal clk_50    : std_logic;
   signal counter : unsigned(27 downto 0);
   constant c_period : unsigned(counter'range) :=
     to_unsigned(25_000_000 - 1, counter'length);
   signal ledo : std_logic := '0';
-  signal pll_locked : std_logic;
 begin
   inst_pll : CC_PLL
     generic map (
@@ -57,18 +56,18 @@ begin
       CLK_FEEDBACK        => '0',
       USR_LOCKED_STDY_RST => '0',
       USR_PLL_LOCKED_STDY => open,
-      USR_PLL_LOCKED      => pll_locked,
-      CLK0                => clk_100,
+      USR_PLL_LOCKED      => open,
+      CLK0                => clk_50,
       CLK90               => open,
       CLK180              => open,
       CLK270              => open,
       CLK_REF_OUT         => open
       );
 
-  process(clk_100)
+  process(clk_50)
   begin
-    if rising_edge(clk_100) then
-      if rst = '0' or pll_locked = '0' or counter = 0 then
+    if rising_edge(clk_50) then
+      if rst = '0' or counter = 0 then
         counter <= c_period - 1;
         ledo <= not ledo;
       else

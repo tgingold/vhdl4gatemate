@@ -18,12 +18,7 @@ entity vga is
 end entity;
 
 architecture rtl of vga is
-  --  VGA 640x480 72Hz 31.5MHz
-  --  H: Sync + Back-Porch + Frame + Front-Porch
-  --      40  +  128       + 640   + 24            = 832
-  --  V: Sync + Back-Proch + Frame + Front-Porch
-  --     3   +  28         + 480   + 9             = 520
-  --
+  --  VGA 800x600 40Mhz
 
   constant hsync : natural := 128;
   constant hbporch : natural := 88;

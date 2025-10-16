@@ -14,6 +14,14 @@ On Linux, update your `PATH`:
 PATH="<extracted_location>/oss-cad-suite/bin:$PATH"
 ```
 
+## The examples
+
+* 00-blink: A very simple example (blinking leds)
+
+* 01-blink-pll: A still standalone example that instantiate the PLL.
+  This example could be considered as a start point for a design.
+
+
 ## Reference Doc
 
 Not required for the demos, but useful.
@@ -24,22 +32,11 @@ Not required for the demos, but useful.
 * [GateMate A1 Pin Lists](https://www.colognechip.com/docs/ds1001-gatemate1-attachment-latest.zip)
 * [GateMate A1 library](https://www.colognechip.com/docs/ug1001-gatemate1-primitives-library-latest.pdf)
 
-## Examples
+## Other references
 
-### 00-blink
+There are probably much comprehensive projects for the GateMateA1-EVB
+or for the GateMate itself.  However, most of them use only verilog.
 
-A very simple and standalone example.  Useful to test your
-installation.  If `make load` fails with a message such as `cannot
-find board`, it might be because you need to be root to access to the
-USB port.  However, if you simply try `sudo openFPGALoader ...`, it
-would probably fail as `PATH` is not preserved (or overwritten) and
-thus `openFPGALoader` would not be found.  You need to do: `sudo
-/<extracted_location>/oss-cad-suite/bin/openFPGALoader ...`
-
-### 01-blink-pll
-
-A very simple and standalone example which instantiate the PLL.  This
-hard block is probably the main one you would instantiate in most of
-your designs.  The PLL compoment is declared within the top-level.
-
-Also, the PLL locked output is used as a reset signal.
+* [Patrick Urban repos](https://github.com/pu-cc)
+* [Extension boards](https://github.com/intergalaktik/Extension_Boards_for_Olimex_GateMate)
+* [chili-chips-ba](https://github.com/chili-chips-ba/openCologne)
