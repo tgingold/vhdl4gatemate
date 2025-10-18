@@ -2,7 +2,8 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-use work.cc_components.all;
+library colognechip;
+use colognechip.cc_components.all;
 
 entity vga is
   port (

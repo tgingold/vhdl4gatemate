@@ -22,7 +22,10 @@ PATH="<extracted_location>/oss-cad-suite/bin:$PATH"
   This example could be considered as a start point for a design.
 
 * 02-vga-bars: First use of the VGA interface on the board.  Also
-  first use of common files (Makefile and GateMate component package)
+  first use of common files (Makefile and GateMate component package).
+
+* 03-vga-pixel: A moving pixel on the VGA screen.  Improved use of common
+  files.
 
 ## Reference Doc
 

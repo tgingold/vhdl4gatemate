@@ -1,6 +1,9 @@
 all: $(TOP).bit
 
-$(TOP).json: $(SRCS)
+# Remove options from SRCS
+SRCFILES=$(patsubst -%,, $(SRCS))
+
+$(TOP).json: $(SRCFILES)
 	yosys -ql yosys.log -m ghdl -p "ghdl $(SRCS) -e $(TOP); synth_gatemate -top $(TOP) -luttree -nomx8 -nomult; write_json $@; write_verilog $(TOP).netlist.v"
 
 $(TOP).impl: $(TOP).json
