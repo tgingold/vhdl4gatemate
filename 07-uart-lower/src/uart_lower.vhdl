@@ -20,11 +20,8 @@ architecture rtl of uart_lower is
   signal counter : unsigned(26 downto 0);
 
   signal tx_byte, rx_byte : std_logic_vector(7 downto 0);
-  signal tx_stb, rx_stb, tx_done, tx_first : std_logic;
+  signal tx_stb, rx_stb, tx_done : std_logic;
   
-  constant msg : string := "Hello GateMate" & CR & LF;
-  signal msg_cnt : natural range msg'range;
-
   signal tx_msg : std_logic := '0';
 
   signal led_count : natural range 0 to 5_000_000 := 0;
@@ -73,22 +70,18 @@ begin
       tx_stb <= '0';
 
       if tx_msg = '1' then
-        if tx_done = '1' or tx_first = '1' then
-          tx_byte <= std_logic_vector(to_unsigned (character'pos (msg(msg_cnt)), 8));
-          tx_stb <= '1';
-          tx_first <= '0';
-
-          if msg_cnt = msg'right then
-            tx_msg <= '0';
-          else
-            msg_cnt <= msg_cnt + 1;
-          end if;
+        if tx_done = '1' then
+          tx_msg <= '0';
         end if;
       else
         if rx_stb = '1' then
-          msg_cnt <= msg'left;
+          if unsigned(rx_byte) >= x"41" and unsigned(rx_byte) <= x"5A" then
+            tx_byte <= rx_byte or x"20";
+          else
+            tx_byte <= rx_byte;
+          end if;
           tx_msg <= '1';
-          tx_first <= '1';
+          tx_stb <= '1';
         end if;
       end if;
     end if;
