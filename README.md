@@ -31,6 +31,8 @@ PATH="<extracted_location>/oss-cad-suite/bin:$PATH"
 
 * 05-uart-loopback: A very simple example to test UART connectivity.
 
+* 06-uart-hello: Hello world design throught UART.
+
 I use `.vhdl` as the extension of the VHDL source files.  Some people prefer
 to use `.vhd`, but this clashes with the extension used for virtual hard disk
 for virtual machines.
