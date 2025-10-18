@@ -25,3 +25,5 @@ board is the only one to provide USB UART.
 You probably need to use `sudo` for permissions.
 
 Any baudrate would work, but we will standardize on 115200.
+
+Try C-J and C-M for new line and carriage return.
