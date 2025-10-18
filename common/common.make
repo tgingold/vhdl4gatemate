@@ -1,10 +1,7 @@
 all: $(TOP).bit
 
-# Remove options from SRCS
-SRCFILES=$(patsubst -%,, $(SRCS))
-
-$(TOP).json: $(SRCFILES)
-	yosys -ql yosys.log -m ghdl -p "ghdl $(SRCS) -e $(TOP); synth_gatemate -top $(TOP) -luttree -nomx8 -nomult; write_json $@; write_verilog $(TOP).netlist.v"
+$(TOP).json: $(SRCS)
+	yosys -ql yosys.log -m ghdl -p "ghdl --vendor-library=colognechip --work=colognechip ../common/cc_components.vhdl --work=work $(SRCS) -e $(TOP); synth_gatemate -top $(TOP) -luttree -nomx8 -nomult; write_json $@; write_verilog $(TOP).netlist.v"
 
 $(TOP).impl: $(TOP).json
 	nextpnr-himbaechel --device=CCGM1A1 --json $(TOP).json -o ccf=$(CCF) -o out=$@ --router router2

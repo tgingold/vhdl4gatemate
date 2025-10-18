@@ -1,5 +1,5 @@
 TOP=blink
-SRCS=src/$(TOP).vhd
+SRCS=src/$(TOP).vhdl
 CCF=src/$(TOP).ccf
 
 all: $(TOP).bit
