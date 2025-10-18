@@ -1,9 +1,9 @@
-# VHDL demo for Gatemate FPGA
+# VHDL demos for Gatemate FPGA
 
 ## What do you need ?
-FPGA board: [Olimex GateMateA1-EVB](https://www.olimex.com/Products/FPGA/GateMate/GateMateA1-EVB/open-source-hardware)(~ 50euro).
+FPGA board: [Olimex GateMateA1-EVB](https://www.olimex.com/Products/FPGA/GateMate/GateMateA1-EVB/open-source-hardware) (~ 50euro).
 
-Software: [Yosys OSS cad suite](https://colognechip.com/programmable-logic/gatemate/toolchain/#get-latest-builds)(the page contain the link and the instructions)
+Software: [Yosys OSS cad suite](https://colognechip.com/programmable-logic/gatemate/toolchain/#get-latest-builds) (the page contain the link and the instructions)
 
 ## How to start ?
 
