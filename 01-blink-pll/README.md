@@ -11,3 +11,9 @@ If you need further details, go to the FPGA datasheet and library guide!
 
 The button is used as a reset, we will see later how to do a reset using
 the PLL lock indicator.
+
+During synthesis (elaboration), you will get a warning as the PLL is not instantiated:
+```
+src/blink.vhd:44:3:warning: instance "inst_pll" of component "CC_PLL" is not bound [-Wbinding]
+```
+This is OK. As a generic synthesizer tool, ghdl doesn't know that `CC_PLL` is a hard block.  We will see how to get rid of this message later.

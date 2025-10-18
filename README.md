@@ -21,6 +21,7 @@ PATH="<extracted_location>/oss-cad-suite/bin:$PATH"
 * 01-blink-pll: A still standalone example that instantiate the PLL.
   This example could be considered as a start point for a design.
 
+* 02-vga-bars: First use of the VGA interface on the board.
 
 ## Reference Doc
 
