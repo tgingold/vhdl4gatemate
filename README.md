@@ -27,6 +27,10 @@ PATH="<extracted_location>/oss-cad-suite/bin:$PATH"
 * 03-vga-pixel: A moving pixel on the VGA screen.  Improved use of common
   files.
 
+I use `.vhdl` as the extension of the VHDL source files.  Some people prefer
+to use `.vhd`, but this clashes with the extension used for virtual hard disk
+for virtual machines.
+
 ## Reference Doc
 
 Not required for the demos, but useful.
