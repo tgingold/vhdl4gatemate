@@ -17,3 +17,5 @@ load: $(TOP).bit
 	@echo "you might need to do: sudo $$(which openFPGALoader) ..."
 	openFPGALoader -b dirtyJtag $(TOP).bit
 
+clean:
+	$(RM) -f $(TOP).json $(TOP).impl $(TOP).bit $(TOP).netlist.v yosys.log
