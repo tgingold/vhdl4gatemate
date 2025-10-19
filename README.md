@@ -35,6 +35,8 @@ PATH="<extracted_location>/oss-cad-suite/bin:$PATH"
 
 * 07-uart-lower: TX and RX uart module.
 
+* 08-ps2-print: Print PS/2 scan code sent by a keyboard
+
 I use `.vhdl` as the extension of the VHDL source files.  Some people prefer
 to use `.vhd`, but this clashes with the extension used for virtual hard disk
 for virtual machines.
