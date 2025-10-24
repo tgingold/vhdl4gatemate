@@ -1,5 +1,5 @@
 TOP=vga
 SRCS=src/$(TOP).vhdl
-CCF=src/$(TOP).ccf
+CCF=../common/evb-vga.ccf
 
 include ../common/common.make

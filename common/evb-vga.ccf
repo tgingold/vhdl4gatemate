@@ -1,0 +1,17 @@
+Net   "vga_hsync_o" Loc = "IO_WB_A1";
+Net   "vga_vsync_o" Loc = "IO_WB_B1";
+
+Net   "vga_red_o[3]" Loc = "IO_WB_A2";
+Net   "vga_red_o[2]" Loc = "IO_WB_B2";
+Net   "vga_red_o[1]" Loc = "IO_WB_A3";
+Net   "vga_red_o[0]" Loc = "IO_WB_B3";
+
+Net   "vga_green_o[3]" Loc = "IO_WB_A4";
+Net   "vga_green_o[2]" Loc = "IO_WB_B4";
+Net   "vga_green_o[1]" Loc = "IO_WB_A5";
+Net   "vga_green_o[0]" Loc = "IO_WB_B5";
+
+Net   "vga_blue_o[3]" Loc = "IO_WB_A6";
+Net   "vga_blue_o[2]" Loc = "IO_WB_B6";
+Net   "vga_blue_o[1]" Loc = "IO_WB_A7";
+Net   "vga_blue_o[0]" Loc = "IO_WB_B7";

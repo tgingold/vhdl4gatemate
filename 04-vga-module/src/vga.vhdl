@@ -163,7 +163,7 @@ entity vga is
     vga_blue_o : out std_logic_vector(3 downto 0);
     vga_hsync_o : out std_logic;
     vga_vsync_o : out std_logic;
-    led : out std_logic
+    led_o : out std_logic
     );
 end entity;
 
@@ -251,5 +251,5 @@ begin
     end if;
   end process;
 
-  led <= ydir; -- but_i;
+  led_o <= ydir; -- but_i;
 end architecture;

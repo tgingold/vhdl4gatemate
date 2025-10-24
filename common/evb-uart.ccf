@@ -1,0 +1,2 @@
+Net   "tx_o"  Loc = "IO_SA_B6"; # RX of RP2040
+Net   "rx_i"  Loc = "IO_SA_A6"; # RX of RP2040

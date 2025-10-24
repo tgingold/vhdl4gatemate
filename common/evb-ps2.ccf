@@ -1,0 +1,2 @@
+Net   "ps2_clk_b"   Loc = "IO_WB_A0";
+Net   "ps2_data_b"  Loc = "IO_WB_B0";

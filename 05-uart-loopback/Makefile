@@ -1,5 +1,5 @@
 TOP=uart
 SRCS= src/$(TOP).vhdl
-CCF=src/$(TOP).ccf
+CCF=../common/evb-uart.ccf
 
 include ../common/common.make
