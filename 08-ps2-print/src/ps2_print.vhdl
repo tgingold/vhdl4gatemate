@@ -59,6 +59,8 @@ begin
        rx_stb_o   => open);
 
 
+  --  Resynchronize ps2_clk to avoid metastability.
+  --  TODO: add a constraint to place both FF close.
   proc_sync_data: process(clk_50m)
   begin
     if rising_edge(clk_50m) then
@@ -67,6 +69,7 @@ begin
     end if;
   end process;
 
+  --  PS2 data receiver.
   proc_rx: process(clk_50m)
   begin
     if rising_edge(clk_50m) then
@@ -110,6 +113,7 @@ begin
     end if;
   end process;
 
+  --  Byte to UART.
   process (clk_50m)
   begin
     if rising_edge(clk_50m) then
@@ -147,6 +151,7 @@ begin
     end if;
   end process;
 
+  --  Binary to hexa converter.
   process (clk_50m)
   begin
     if rising_edge(clk_50m) then
