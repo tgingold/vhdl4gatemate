@@ -25,24 +25,17 @@ architecture rtl of ps2_print is
 
   signal but_d : std_logic;
 
-  signal ps2_rx_byte : std_logic_vector(8 downto 0);
-  signal ps2_rx_ready, ps2_rx_done : std_logic;
-  signal ps2_rx_cnt : natural range 0 to 9;
-  
+  signal ps2_rx_byte : std_logic_vector(7 downto 0);
+  signal ps2_rx_done : std_logic;
+
   --  Timer for 100us (0.1 ms).
-  subtype t_ps2_tx_timer is natural range 0 to (c_clk_freq / 10_000) - 1;
-  signal ps2_tx_timer : t_ps2_tx_timer;
-  signal ps2_tx_byte, ps2_tx_buf : std_logic_vector(7 downto 0);
-  signal ps2_tx_parity : std_logic;
-  signal ps2_tx_cnt : natural range 0 to 10;
+  signal ps2_tx_byte : std_logic_vector(7 downto 0);
   signal ps2_tx_req : std_logic;
   signal ps2_tx_rdy : std_logic;
-  type t_ps2_tx_state is (S_PS2_TX_IDLE, S_PS2_TX_RTS, S_PS2_TX_DATA, S_PS2_TX_STOP, S_PS2_TX_ACK);
-  signal ps2_tx_state : t_ps2_tx_state;
 
   signal ps2_data_in, ps2_data_out, ps2_data_tri : std_logic;
   signal ps2_clk_in, ps2_clk_tri : std_logic;
-  
+
   signal led_count : natural range 0 to 5_000_000 := 0;
 
   signal uart_tx_byte, uart_tx_dir : std_logic_vector(7 downto 0);
@@ -76,45 +69,24 @@ begin
        rx_stb_o   => open);
 
 
-  --  Resynchronize ps2_clk to avoid metastability.
-  --  TODO: add a constraint to place both FF close.
-  proc_sync_data: process(clk_50m)
-  begin
-    if rising_edge(clk_50m) then
-      ps2_clk_d <= ps2_clk;
-      ps2_clk <= ps2_clk_in;
-    end if;
-  end process;
-
-  --  PS2 data receiver.
-  proc_rx: process(clk_50m)
-  begin
-    if rising_edge(clk_50m) then
-      ps2_rx_done <= '0';
-      
-      if rst_n = '0' then
-        ps2_rx_ready <= '1';
-      else
-        if (ps2_clk_d = '0' and ps2_clk = '1') and ps2_tx_state = S_PS2_TX_IDLE then
-          --  Rising edge on the clock when not transmitting.
-          if ps2_rx_ready = '1' and ps2_data_in = '0' then
-            --  Start
-            ps2_rx_cnt <= 0;
-            ps2_rx_ready <= '0';
-          elsif ps2_rx_ready = '0' then
-            if ps2_rx_cnt = 9 then
-              --  Stop
-              ps2_rx_done <= '1';
-              ps2_rx_ready <= '1';
-            else
-              ps2_rx_byte <= ps2_data_in & ps2_rx_byte(8 downto 1);
-              ps2_rx_cnt <= ps2_rx_cnt + 1;
-            end if;
-          end if;
-        end if;
-      end if;
-    end if;
-  end process;
+  inst_ps2: entity work.ps2
+    generic map (
+      g_clk_freq => c_clk_freq
+    )
+    port map (
+      clk_i => clk_50m,
+      rst_n_i => rst_n,
+      tx_byte_i => ps2_tx_byte,
+      tx_req_i => ps2_tx_req,
+      tx_rdy_o => ps2_tx_rdy,
+      rx_byte_o => ps2_rx_byte,
+      rx_valid_o => ps2_rx_done,
+      clk_in_i => ps2_clk_in,
+      clk_tri_o => ps2_clk_tri,
+      data_in_i => ps2_data_in,
+      data_out_o => ps2_data_out,
+      data_tri_o => ps2_data_tri
+    );
 
   inst_ps2_data_iob: CC_IOBUF
     port map (
@@ -130,71 +102,7 @@ begin
       Y => ps2_clk_in,
       IO => ps2_clk_b);
 
-  proc_tx: process(clk_50m)
-  begin
-    if rising_edge(clk_50m) then
-      if rst_n = '0' then
-        ps2_tx_state <= S_PS2_TX_IDLE;
-        ps2_tx_rdy <= '1';
-        ps2_clk_tri <= '1';
-        ps2_data_tri <= '1';
-      else
-        case ps2_tx_state is
-          when S_PS2_TX_IDLE =>
-            ps2_tx_rdy <= '1';
-            if ps2_tx_req = '1' then
-              ps2_tx_state <= S_PS2_TX_RTS;
-              ps2_tx_timer <= 0;
-              ps2_tx_rdy <= '0';
-              ps2_tx_buf <= ps2_tx_byte;
-              ps2_tx_parity <= '0';
-            end if;
-          when S_PS2_TX_RTS =>
-            --  Clock down.
-            ps2_clk_tri <= '0';
-            if ps2_tx_timer = t_ps2_tx_timer'high then
-              ps2_tx_state <= S_PS2_TX_DATA;
-              --  The start bit: data down
-              ps2_data_tri <= '0';
-              ps2_data_out <= '0';
-              ps2_tx_cnt <= 0;
-            else
-              ps2_tx_timer <= ps2_tx_timer + 1;
-            end if;
-          when S_PS2_TX_DATA =>
-            --  Release clock.
-            ps2_clk_tri <= '1';
-            if ps2_clk_d = '1' and ps2_clk = '0' then
-              --  Falling edge of clock, send next bit.
-              if ps2_tx_cnt = 9 then
-                --  Parity bit sent, next is stop.
-                ps2_data_out <= '1';
-                ps2_tx_state <= S_PS2_TX_STOP;
-              elsif ps2_tx_cnt = 8 then
-                --  All data bits sent, next is parity.
-                ps2_data_out <= not ps2_tx_parity;
-              else
-                ps2_data_out <= ps2_tx_buf(0);
-                ps2_tx_parity <= ps2_tx_parity xor ps2_tx_buf(0);
-                ps2_tx_buf <= '0' & ps2_tx_buf(7 downto 1);
-              end if;
-              ps2_tx_cnt <= ps2_tx_cnt + 1;
-            end if;
-          when S_PS2_TX_STOP =>
-            ps2_data_out <= '1';
-            if ps2_clk_d = '1' and ps2_clk = '0' then
-              ps2_tx_state <= S_PS2_TX_ACK;
-            end if;
-          when S_PS2_TX_ACK =>
-            ps2_data_tri <= '1';
-            if ps2_clk_d = '0' and ps2_clk = '1' then
-              ps2_tx_state <= S_PS2_TX_IDLE;
-            end if;
-        end case;
-      end if;
-    end if;
-  end process;
-
+  --  Button press to send F4 to enable the keyboard/mouse.
   process(clk_50m)
   begin
     if rising_edge(clk_50m) then
@@ -221,7 +129,7 @@ begin
       if led_count /= 0 then
         led_count <= led_count - 1;
       end if;
-      if ps2_tx_state = S_PS2_TX_RTS then -- ps2_rx_done = '1' then
+      if ps2_rx_done = '1' then
         led_count <= 5_000_000;
       end if;
     end if;
