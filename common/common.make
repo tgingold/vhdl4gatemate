@@ -1,3 +1,5 @@
+NEXTPNR=nextpnr-himbaechel
+
 all: $(TOP).bit
 
 # Synthesis
@@ -10,7 +12,7 @@ $(TOP).ccf: ../common/GateMateA1-EVB.ccf $(CCF)
 	cat $^ > $@
 
 $(TOP).impl: $(TOP).json $(TOP).ccf
-	nextpnr-himbaechel --device=CCGM1A1 --json $(TOP).json -o ccf=$(TOP).ccf -o out=$@ --router router2
+	$(NEXTPNR) --device=CCGM1A1 --json $(TOP).json -o fpga_mode=2 -o ccf=$(TOP).ccf -o out=$@ --router router2 -l pnr.log
 
 $(TOP).bit: $(TOP).impl
 	gmpack $< $@
