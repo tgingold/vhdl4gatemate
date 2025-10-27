@@ -2,9 +2,6 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-library colognechip;
-use colognechip.cc_components.all;
-
 entity ps2_print is
   port (
     clk_i : in std_logic;
@@ -88,19 +85,12 @@ begin
       data_tri_o => ps2_data_tri
     );
 
-  inst_ps2_data_iob: CC_IOBUF
-    port map (
-      A => ps2_data_out,
-      T => ps2_data_tri,
-      Y => ps2_data_in,
-      IO => ps2_data_b);
+  --  Handle tri-state.
+  ps2_data_in <= ps2_data_b;
+  ps2_data_b <= ps2_data_out when ps2_data_tri = '0' else 'Z';
 
-  inst_ps2_clk_iob: CC_IOBUF
-    port map (
-      A => '0',
-      T => ps2_clk_tri,
-      Y => ps2_clk_in,
-      IO => ps2_clk_b);
+  ps2_clk_in <= ps2_clk_b;
+  ps2_clk_b <= '0' when ps2_clk_tri = '0' else 'Z';
 
   --  Button press to send F4 to enable the keyboard/mouse.
   process(clk_50m)
@@ -150,14 +140,6 @@ begin
               uart_tx_hex <= ps2_rx_byte(7 downto 4);
               uart_tx_stb_int <= '1';
               uart_tx_state <= S_HIGH;
-            elsif false and ps2_clk = '1' and ps2_clk_d = '0' then
-              if ps2_data_in = '0' then
-                uart_tx_dir <= std_logic_vector(to_unsigned(character'pos('0'), 8));
-              else
-                uart_tx_dir <= std_logic_vector(to_unsigned(character'pos('1'), 8));
-              end if;
-              uart_tx_stb_int <= '1';
-              uart_tx_state <= S_SPACE;
             end if;
           when S_HIGH =>
             if uart_tx_done = '1' then
