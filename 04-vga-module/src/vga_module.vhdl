@@ -2,7 +2,7 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-entity vga is
+entity vga_module is
   port (
     clk_i : in std_logic;
     but_i : in std_logic;
@@ -15,7 +15,7 @@ entity vga is
     );
 end entity;
 
-architecture rtl of vga is
+architecture rtl of vga_module is
   constant hframe : natural := 800;
   constant vframe : natural := 600;
 
@@ -29,7 +29,7 @@ architecture rtl of vga is
   signal hpre, hvideo, vpre, vvideo : std_logic;
   signal xdir, ydir : std_logic;
 begin
-  inst_vga: entity work.vga_generator
+  inst_vga: entity work.vga
     port map (
       clk_ref_i => clk_i,
       clk_o => clk_video,
