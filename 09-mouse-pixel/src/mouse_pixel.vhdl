@@ -3,7 +3,7 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 use work.vga_pkg.all;
 
-entity ps2_cursor is
+entity mouse_pixel is
   port (
     clk_i : in std_logic;
     but_i : in std_logic;
@@ -20,7 +20,7 @@ entity ps2_cursor is
     );
 end entity;
 
-architecture rtl of ps2_cursor is
+architecture rtl of mouse_pixel is
   signal clk_video    : std_logic;
   signal rst_n : std_logic;
 

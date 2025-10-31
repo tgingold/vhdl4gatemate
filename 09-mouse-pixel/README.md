@@ -1,4 +1,4 @@
-# 09-mouse-cursor
+# 09-mouse-pixel
 
 Decode the PS2 data from a mouse and move a pixel.
 

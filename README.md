@@ -37,7 +37,7 @@ PATH="<extracted_location>/oss-cad-suite/bin:$PATH"
 
 * 08-ps2-print: Print PS/2 scan code sent by a keyboard
 
-* 09-mouse-cursor: Move a pixel with the mouse
+* 09-mouse-pixel: Move a pixel with the mouse
 
 I use `.vhdl` as the extension of the VHDL source files.  Some people prefer
 to use `.vhd`, but this clashes with the extension used for virtual hard disk
