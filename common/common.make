@@ -8,8 +8,9 @@ $(TOP).json: $(SRCS)
 
 # Concat all the pin constraints
 # (nextpnr warns on constraints for unused pins)
-$(TOP).ccf: ../common/GateMateA1-EVB.ccf $(CCF)
-	cat $^ > $@
+COMMON_CCF=../common/GateMateA1-EVB.ccf
+$(TOP).ccf: $(COMMON_CCF) $(CCF) Makefile
+	cat $(COMMON_CCF) $(CCF) > $@
 
 $(TOP).impl: $(TOP).json $(TOP).ccf
 	$(NEXTPNR) --device=CCGM1A1 --json $(TOP).json -o fpga_mode=2 -o ccf=$(TOP).ccf -o out=$@ --router router2 -l pnr.log
@@ -22,6 +23,6 @@ load: $(TOP).bit
 	openFPGALoader -b dirtyJtag $(TOP).bit
 
 clean:
-	$(RM) -f $(TOP).json $(TOP).ccf $(TOP).impl $(TOP).bit $(TOP).netlist.v yosys.log
+	$(RM) -f $(TOP).json $(TOP).ccf $(TOP).impl $(TOP).bit $(TOP).netlist.v yosys.log pnr.log
 
 .SILENT: load clean
