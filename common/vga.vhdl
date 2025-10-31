@@ -1,3 +1,9 @@
+package vga_pkg is
+  constant vga_hframe : natural := 800;
+  constant vga_vframe : natural := 600;
+  constant vga_clk_freq : natural := 40_000_000;
+end vga_pkg;
+
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
