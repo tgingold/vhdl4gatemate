@@ -40,8 +40,6 @@ architecture rtl of ps2_print is
   type t_uart_tx_state is (S_IDLE, S_HIGH, S_LOW, S_SPACE);
   signal uart_tx_state : t_uart_tx_state;
   signal uart_tx_stb, uart_tx_stb_int, uart_tx_done : std_logic;
-
-  signal ps2_clk, ps2_clk_d : std_logic;
 begin
   inst_pll : entity work.pll
     generic map (freq => 50.0)

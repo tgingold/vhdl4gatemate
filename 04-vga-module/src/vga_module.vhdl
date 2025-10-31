@@ -20,7 +20,6 @@ architecture rtl of vga_module is
   constant vframe : natural := 600;
 
   signal clk_video    : std_logic;
-  signal pll_locked : std_logic;
   signal rst_n : std_logic;
 
   signal vga_x, vga_y : unsigned(9 downto 0);

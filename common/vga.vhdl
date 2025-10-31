@@ -43,9 +43,8 @@ architecture rtl of vga is
   signal pll_locked : std_logic;
   signal rst_n : std_logic;
 
-  signal vcount, hcount, xpos, ypos : unsigned(9 downto 0);
+  signal vcount, hcount : unsigned(9 downto 0);
   signal hpre, hvideo, vpre, vvideo : std_logic;
-  signal xdir, ydir : std_logic;
 begin
   inst_pll : CC_PLL
     generic map (
