@@ -40,7 +40,7 @@ architecture rtl of mouse_pixel is
   signal ps2_data_in, ps2_data_out, ps2_data_tri : std_logic;
   signal ps2_clk_in, ps2_clk_tri : std_logic;
 
-  type t_ps2_state is (S_IDLE, S_CMD, S_X, S_Y);
+  type t_ps2_state is (S_INIT, S_CMD, S_IDLE, S_X, S_Y);
   signal ps2_state : t_ps2_state;
   signal ps2_but_byte : std_logic_vector(7 downto 0);
 
@@ -115,25 +115,33 @@ begin
     variable diff : unsigned(7 downto 0);
   begin
     if rising_edge(clk_video) then
-      if rst_n = '0' then
-        ps2_state <= S_IDLE;
+      ps2_tx_req <= '0';
+      but_d <= but_i;
+
+      if rst_n = '0' or (but_i = '0' and but_d = '1') then
+        ps2_state <= S_INIT;
         xpos <= to_unsigned(vga_hframe / 2 + 4, xpos'length);
         ypos <= to_unsigned(vga_vframe / 2, ypos'length);
         led_o <= '1';
       else
         case ps2_state is
+          when S_INIT =>
+            --  Send the tx_enable command
+            ps2_tx_byte <= x"F4";
+            ps2_tx_req <= '1';
+            ps2_state <= S_CMD;
+
+          when S_CMD =>
+            --  Wait for mouse reply to the tx_enable command.
+            if ps2_rx_valid = '1' then
+              ps2_state <= S_IDLE;
+            end if;
+
           when S_IDLE =>
-            if ps2_tx_req = '1' then
-              ps2_state <= S_CMD;
-            elsif ps2_rx_valid = '1' then
+            if ps2_rx_valid = '1' then
               ps2_but_byte <= ps2_rx_byte;
               led_o <= not ps2_rx_byte(0);  -- Left button
               ps2_state <= S_X;
-            end if;
-
-          when S_CMD =>
-            if ps2_rx_valid = '1' then
-              ps2_state <= S_IDLE;
             end if;
 
           when S_X =>
@@ -181,24 +189,6 @@ begin
               ps2_state <= S_IDLE;
             end if;
         end case;
-      end if;
-    end if;
-  end process;
-
-  --  Button press to send F4 to enable the keyboard/mouse.
-  process(clk_video)
-  begin
-    if rising_edge(clk_video) then
-      ps2_tx_req <= '0';
-      if rst_n = '0' then
-        ps2_tx_byte <= (others => '0');
-        but_d <= '1';
-      else
-        but_d <= but_i;
-        if but_i = '0' and but_d = '1' then
-          ps2_tx_byte <= x"F4";  -- tx enable
-          ps2_tx_req <= '1';
-        end if;
       end if;
     end if;
   end process;
