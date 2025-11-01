@@ -16,3 +16,9 @@ that every components in the `colognechip` library are representing hard IP
 (or blackbox) which must not be described.  When you instantiate `cc_pll`,
 you don't expect to use a sub design described in HDL, you expect to use
 the already present PLL block.
+
+## Variations
+
+* Change the speed
+
+* Instead of a box, draw a diamond or a ball

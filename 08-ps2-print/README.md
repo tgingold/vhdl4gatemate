@@ -5,3 +5,7 @@ a mouse.
 
 For a mouse, you should push the button at least one to send the enable data
 command.  Otherwise, the mouse stays silent.
+
+## Variations
+
+* Set the leds on the keyboard

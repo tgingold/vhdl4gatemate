@@ -17,3 +17,9 @@ Also, instead of declaring the components of the GateMate, they have been put
 in common/cc_components.vhdl.  This file has been automatically generated from
 the verilog file.  It is still in the `work` library and you still get
 the `binding` warning.
+
+## Variations
+
+* Change the pattern, or the colors
+
+* Use different VGA mode

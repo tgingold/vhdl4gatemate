@@ -17,3 +17,7 @@ During synthesis (elaboration), you will get a warning as the PLL is not instant
 src/blink.vhd:44:3:warning: instance "inst_pll" of component "CC_PLL" is not bound [-Wbinding]
 ```
 This is OK. As a generic synthesizer tool, ghdl doesn't know that `CC_PLL` is a hard block.  We will see how to get rid of this message later.
+
+## Variations
+
+* Change the frequency of the led
