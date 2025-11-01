@@ -14,25 +14,31 @@ use colognechip.cc_components.all;
 entity vga is
   port (
     clk_ref_i : in std_logic;
+    --  Clock and reset output (defined by the video frequency).
     clk_o : out std_logic;
     rst_n_o : out std_logic;
+    --  VGA signals
     hsync_o : out std_logic;
     vsync_o : out std_logic;
-    in_frame_o : out std_logic;
-    end_frame_o : out std_logic;
     x_o : out std_logic_vector(9 downto 0);
-    y_o : out std_logic_vector(9 downto 0)
+    y_o : out std_logic_vector(9 downto 0);
+    --  Set when x_o and y_o are within the visible frame.
+    in_frame_o : out std_logic;
+    --  Pulse at the end of the frame.
+    end_frame_o : out std_logic
     );
 end entity;
 
 architecture rtl of vga is
   --  VGA 800x600 40Mhz
 
+  --  Order: hsync, hbporch, frame, hfporch
   constant hsync : natural := 128;
   constant hbporch : natural := 88;
   constant hframe : natural := 800;
   constant hfporch : natural := 40;
 
+  --  Order: vsync, vbporch, frame, vfporch
   constant vsync : natural := 4;
   constant vbporch : natural := 23;
   constant vframe : natural := 600;
