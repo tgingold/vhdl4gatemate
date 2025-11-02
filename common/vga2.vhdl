@@ -37,13 +37,11 @@ architecture rtl of vga2 is
   --  Order: hsync, hbporch, frame, hfporch
   constant hsync : natural := 128;
   constant hbporch : natural := 88;
-  constant hframe : natural := 800;
   constant hfporch : natural := 40;
 
   --  Order: vsync, vbporch, frame, vfporch
   constant vsync : natural := 4;
   constant vbporch : natural := 23;
-  constant vframe : natural := 600;
   constant vfporch : natural := 1;
 
   signal clk_pll : std_logic;
@@ -124,7 +122,7 @@ begin
             vsync_o <= '1';
           elsif y = -1 then
             vvideo <= '1';
-          elsif y = vframe - 1 - 1 then
+          elsif y = vga_vframe - 1 - 1 then
             vvideo <= '0';
           elsif y = vga_vframe + vfporch - 1 - 1 then
             vsync_o <= '0';
