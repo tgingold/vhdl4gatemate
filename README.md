@@ -54,6 +54,7 @@ Not required for the demos, but useful.
 * [GateMate A1 datasheet](https://colognechip.com/docs/ds1001-gatemate1-datasheet-latest.pdf)
 * [GateMate A1 Pin Lists](https://www.colognechip.com/docs/ds1001-gatemate1-attachment-latest.zip)
 * [GateMate A1 library](https://www.colognechip.com/docs/ug1001-gatemate1-primitives-library-latest.pdf)
+* [PSRAM](https://jlcpcb.com/api/file/downloadByFileSystemAccessId/8588881136198029312)
 
 ## Other references
 
