@@ -73,7 +73,7 @@ architecture rtl of mouse_cursor is
   signal ps2_data_in, ps2_data_out, ps2_data_tri : std_logic;
   signal ps2_clk_in, ps2_clk_tri : std_logic;
 
-  type t_ps2_state is (S_INIT, S_CMD, S_IDLE, S_X, S_Y);
+  type t_ps2_state is (S_INIT, S_CMD, S_IDLE, S_X, S_X_UPDATE, S_Y, S_Y_UPDATE);
   signal ps2_state : t_ps2_state;
   signal ps2_but_byte : std_logic_vector(7 downto 0);
 begin
@@ -107,7 +107,7 @@ begin
             cur_ycnt <= to_unsigned(1, cur_ycnt'length);
             cur_line <= c_cursor(0);
             cur_xcnt <= (others => '0');
-          elsif cur_ycnt (3) = '0' then
+          elsif cur_ycnt  < cur_ylen then
             --  Next line
             cur_line <= c_cursor(to_integer(cur_ycnt));
             cur_ycnt <= cur_ycnt + 1;
@@ -115,10 +115,10 @@ begin
           end if;
         end if;
 
-        if cur_xcnt(3) = '0' then
+        if cur_xcnt < cur_xlen then
           --  Still in the cursor, draw it.
           pix := cur_line(7);
-          cur_line <= cur_line(6 downto 0) & '0';
+          cur_line <= cur_line(cur_xlen - 2 downto 0) & '0';
           cur_xcnt <= cur_xcnt + 1;
         else
           --  After the cursor.
@@ -199,44 +199,60 @@ begin
               if ps2_but_byte(4) = '1' then
                 -- Move left, negative value
                 diff := not unsigned(ps2_rx_byte) + 1;
-                if diff <= xpos then
-                  xpos <= xpos - diff;
-                else
-                  xpos <= (others => '0');
-                end if;
               else
                 --  Move right, positive value
                 diff := unsigned(ps2_rx_byte);
-                if xpos + diff < to_unsigned(vga_hframe - 1, xpos'length) then
-                  xpos <= xpos + diff;
-                else
-                  xpos <= to_unsigned(vga_hframe - 1, xpos'length);
-                end if;
               end if;
-              ps2_state <= S_Y;
+              ps2_state <= S_X_UPDATE;
             end if;
+
+          when S_X_UPDATE =>
+            --  X
+            if ps2_but_byte(4) = '1' then
+              -- Move left, negative value
+              if diff > xpos then
+                xpos <= (others => '0');
+              else
+                xpos <= xpos - diff;
+              end if;
+            else
+              --  Move right, positive value
+              if xpos + diff >= to_unsigned(vga_hframe - 1, xpos'length) then
+                xpos <= to_unsigned(vga_hframe - 1, xpos'length);
+              else
+                xpos <= xpos + diff;
+              end if;
+            end if;
+            ps2_state <= S_Y;
 
           when S_Y =>
             if ps2_rx_valid = '1' then
               if ps2_but_byte(5) = '1' then
                 --  Move down, negative value
                 diff := not unsigned(ps2_rx_byte) + 1;
-                if ypos + diff < to_unsigned(vga_vframe - 1, ypos'length) then
-                  ypos <= ypos + diff;
-                else
-                  ypos <= to_unsigned(vga_vframe - 1, ypos'length);
-                end if;
               else
                 --  Move up, positive value
                 diff := unsigned(ps2_rx_byte);
-                if diff < ypos then
-                  ypos <= ypos - diff;
-                else
-                  ypos <= (others => '0');
-                end if;
               end if;
-              ps2_state <= S_IDLE;
+              ps2_state <= S_Y_UPDATE;
             end if;
+          when S_Y_UPDATE =>
+            if ps2_but_byte(5) = '1' then
+              --  Move down, negative value
+              if ypos + diff >= to_unsigned(vga_vframe - 1, ypos'length) then
+                ypos <= to_unsigned(vga_vframe - 1, ypos'length);
+              else
+                ypos <= ypos + diff;
+              end if;
+            else
+              --  Move up, positive value
+              if diff >= ypos then
+                ypos <= (others => '0');
+              else
+                ypos <= ypos - diff;
+              end if;
+            end if;
+            ps2_state <= S_IDLE;
         end case;
       end if;
     end if;
