@@ -53,7 +53,9 @@ fixed when I used a USB-C hub which was powered (through USB-C).
 
 * 11-psram-write-spi: Store data to the PSRAM
 
-* 12-psram-write-spi: Display PSRAM content
+* 12-psram-read-spi: Display PSRAM content (using SPI)
+
+* 13-psram-read-qspi: Use QSPI to display PSRAM content
 
 I use `.vhdl` as the extension of the VHDL source files.  Some people prefer
 to use `.vhd`, but this clashes with the extension used for virtual hard disk

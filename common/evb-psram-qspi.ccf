@@ -1,0 +1,10 @@
+Net   "psram_cs_n_o"  Loc = "IO_WC_A4";
+Net   "psram_clk_o"   Loc = "IO_WC_B4";
+Net   "psram_d_b[0]"  Loc = "IO_WC_A5";
+Net   "psram_d_b[1]"  Loc = "IO_WC_B5";
+Net   "psram_d_b[2]"  Loc = "IO_WC_A6";
+Net   "psram_d_b[3]"  Loc = "IO_WC_B6";
+Net   "psram_d_b[4]"  Loc = "IO_WC_A7";
+Net   "psram_d_b[5]"  Loc = "IO_WC_B7";
+Net   "psram_d_b[6]"  Loc = "IO_WC_A8";
+Net   "psram_d_b[7]"  Loc = "IO_WC_B8";
