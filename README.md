@@ -51,6 +51,8 @@ fixed when I used a USB-C hub which was powered (through USB-C).
 
 * 10-mouse-cursor: Move a cursor with the mouse
 
+* 11-psram-write-spi: Store data to the PSRAM
+
 I use `.vhdl` as the extension of the VHDL source files.  Some people prefer
 to use `.vhd`, but this clashes with the extension used for virtual hard disk
 for virtual machines.
