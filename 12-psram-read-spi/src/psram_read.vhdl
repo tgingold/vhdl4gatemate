@@ -23,7 +23,7 @@ entity psram_read is
 end psram_read;
 
 architecture rtl of psram_read is
-  constant c_freq : natural := 2_000_000;
+  constant c_freq : natural := 20_000_000;
   signal clk : std_logic;
   signal rst_n : std_logic := '1';
   signal psram_cs_n : std_logic;
@@ -64,7 +64,7 @@ begin
   uart_1: entity work.uart
     generic map (
       g_clk_freq => c_freq,
-      g_baudrate => 9600)
+      g_baudrate => 115200)
     port map (
       clk_i      => clk,
       rst_n_i    => rst_n,
