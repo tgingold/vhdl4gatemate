@@ -56,14 +56,15 @@ begin
       tx_done_o <= '0';
       if rst_n_i = '0' then
         tx_o <= '1';
+        tx_ready <= '1';
       else
         if tx_ready = '1' then
+          --  Stay with 'stop' bit.
+          tx_o <= '1';
           if tx_stb_i = '1' then
             tx_char <= tx_byte_i & '0';
             tx_ready <= '0';
             tx_cnt <= (others => '0');
-            --  Stay with 'stop' bit.
-            tx_o <= '1';
           end if;
         else
           if baudgen_p = '1' then
