@@ -14,6 +14,16 @@ On Linux, update your `PATH`:
 PATH="<extracted_location>/oss-cad-suite/bin:$PATH"
 ```
 
+## Important notes
+
+Pay attention to the power supply of the board.  The board is powered
+through the USB-C connector.
+
+I had issues when I directly connected the board to my laptop (which was
+powered by its battery).  The FPGA behaved sometimes weirdly when switching
+outputs.  I suppose it was due to not strong enough power delivery.  It was
+fixed when I used a USB-C hub which was powered (through USB-C).
+
 ## The examples
 
 * 00-blink: A very simple example (blinking leds)
