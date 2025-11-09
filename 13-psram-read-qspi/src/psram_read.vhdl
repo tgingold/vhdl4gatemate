@@ -20,7 +20,7 @@ entity psram_read is
 end psram_read;
 
 architecture rtl of psram_read is
-  constant c_freq : natural := 20_000_000;
+  constant c_freq : natural := 25_000_000;
   signal clk : std_logic;
   signal rst_n : std_logic := '1';
   signal psram_cs_n : std_logic;
@@ -34,7 +34,10 @@ architecture rtl of psram_read is
   signal addr : unsigned(23 downto 0);
 
   type t_bstate is (
-    S_RESET, S_START,
+    S_RESET, S_RESETH,
+    S_QUITL, S_QUITH, S_QUITDL, S_QUITDH,
+    S_ENL, S_ENH, S_ENDL,
+    S_START,
     S_CMDL, S_CMDH,
     S_ADDRL, S_ADDRH,
     S_HZL, S_HZH,
@@ -103,6 +106,66 @@ begin
       else
         case bstate is
           when S_RESET =>
+            --  Pulse after reset.
+            psram_clk_o <= '0';
+            psram_cs_n <= '1';
+            psram_oe <= '0';
+            bstate <= S_RESETH;
+          when S_RESETH =>
+            --  Pulse and prepare to exit QPI mode.
+            psram_clk_o <= '1';
+            shiftreg (23 downto 16) <= x"f5"; -- Quit QPI
+            blen <= 2;
+            bstate <= S_QUITL;
+          when S_QUITL =>
+            --  Send the command.
+            psram_clk_o <= '0';
+            psram_cs_n <= '0';
+            psram_oe <= '1';
+            psram_out(3 downto 0) <= shiftreg(23 downto 20);
+            psram_out(7 downto 4) <= shiftreg(23 downto 20);
+            shiftreg <= shiftreg(19 downto 0) & x"0";
+            blen <= blen - 1;
+            bstate <= S_QUITH;
+          when S_QUITH =>
+            --  Pulse clock and check for end of command.
+            psram_clk_o <= '1';
+            if blen = 0 then
+              bstate <= S_QUITDL;
+            else
+              bstate <= S_QUITL;
+            end if;
+          when S_QUITDL =>
+            --  Release chip select, and pulse the clock.
+            psram_clk_o <= '0';
+            psram_cs_n <= '1';
+            psram_oe <= '0';
+            bstate <= S_QUITDH;
+          when S_QUITDH =>
+            --  Pulse the clock and prepare to enable QPI mode.
+            psram_clk_o <= '1';
+            blen <= 8;
+            shiftreg (23 downto 16) <= x"35"; -- Enable QPI
+            bstate <= S_ENL;
+          when S_ENL =>
+            --  Send the command.
+            psram_clk_o <= '0';
+            psram_cs_n <= '0';
+            psram_oe <= '1';
+            psram_out <= (others => shiftreg(23));
+            shiftreg <= shiftreg(22 downto 0) & '0';
+            blen <= blen - 1;
+            bstate <= S_ENH;
+          when S_ENH =>
+            --  Pulse the clock.
+            psram_clk_o <= '1';
+            if blen = 0 then
+              bstate <= S_ENDL;
+            else
+              bstate <= S_ENL;
+            end if;
+          when S_ENDL =>
+            --  Release chip select, and pulse the clock.
             psram_clk_o <= '0';
             psram_cs_n <= '1';
             psram_oe <= '0';
@@ -112,14 +175,15 @@ begin
             psram_cs_n <= '1';
             psram_oe <= '0';
             shiftreg (23 downto 16) <= x"eb"; -- SPI quand read.
-            blen <= 8;
+            blen <= 2;
             bstate <= S_CMDL;
           when S_CMDL =>
             psram_clk_o <= '0';
             psram_cs_n <= '0';
             psram_oe <= '1';
-            psram_out <= (others => shiftreg(23));
-            shiftreg <= shiftreg(22 downto 0) & '0';
+            psram_out(3 downto 0) <= shiftreg(23 downto 20);
+            psram_out(7 downto 4) <= shiftreg(23 downto 20);
+            shiftreg <= shiftreg(19 downto 0) & x"0";
             blen <= blen - 1;
             bstate <= S_CMDH;
           when S_CMDH =>

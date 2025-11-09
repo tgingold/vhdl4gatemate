@@ -14,4 +14,9 @@ ef ee ed ec eb ea e9 ff-e7 e6 e5 e4 e3 e2 e1 ff
 
 * Use fast read.
 
+* The PSRAMs usually have an ID command (0x9f) which returns the ID
+  of the chip (on 64b).  It is not documented in the LS68S3200 datasheet,
+  but it looks implemented by the chip.  Modify the design to display
+  the full ID.
+
 * Display the content of both PSRAM.
