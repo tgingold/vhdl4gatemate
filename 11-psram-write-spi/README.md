@@ -10,6 +10,12 @@ As SPI is much simpler, we start with it.
 
 Is it working ?  We will check with the next design.
 
+## Simulation
+
+You can manually check the timing of SPI using simulation.  `make sim` will
+run GHDL.  The pll module in `common/pll.vhdl` is replaced for simulation
+with `sim/pll.vhdl`.
+
 ## Variations
 
 * Write different data to both chips

@@ -1,4 +1,5 @@
 NEXTPNR=nextpnr-himbaechel
+GHDL=ghdl
 
 all: $(TOP).bit
 
